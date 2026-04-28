@@ -1,7 +1,7 @@
 # 📦 RST-Inventar
 
 > Webbasiertes Inventarverwaltungssystem der RST-Veolia GmbH & Co. KG, Herrenberg  
-> IHK-Abschlussprojekt · Fachinformatiker Systemintegration · 2024 / 2025
+> IHK-Abschlussprojekt · Fachinformatiker Systemintegration · 2026
 
 ---
 
