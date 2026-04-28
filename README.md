@@ -156,4 +156,4 @@ rst-inventar/
 
 ---
 
-*RST-Veolia GmbH & Co. KG · Herrenberg · IHK-Abschlussprojekt 2024/2025*
+*RST-Veolia GmbH & Co. KG · Herrenberg · IHK-Abschlussprojekt 2026*
