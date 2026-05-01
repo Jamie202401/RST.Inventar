@@ -33,7 +33,7 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Eigene PHP-Einstellungen überschreiben
 
-COPY config/php-custom.ini "$PHP_INI_DIR/conf.d/php-custom.ini"
+COPY app/config/php-custom.ini "$PHP_INI_DIR/conf.d/php-custom.ini"
 
 # ── Arbeitsverzeichnis setzen ────────────────────────────────
 

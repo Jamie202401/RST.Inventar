@@ -1,0 +1,188 @@
+# ==============================================================
+#  RST.Inventar – Docker Compose Stack
+#
+#  Services:
+#    mariadb          – Datenbank (App + Keycloak)
+#    phpmyadmin       – DB-Frontend      → http://localhost:${PHPMYADMIN_PORT}
+#    keycloak_db_init – Einmalig: legt Keycloak-DB an
+#    keycloak         – Identity Provider → http://localhost:${KEYCLOAK_PORT}
+#    rustfs           – S3-Objektspeicher → API  :${RUSTFS_PORT_API}
+#                                           Web  :${RUSTFS_PORT_CONSOLE}
+#    app              – PHP/Apache App   → http://localhost:${APP_PORT}
+#
+#  Alle Ports und Passwörter werden aus der .env gelesen.
+#  $$VAR = Shell-Variable (erst im Container aufgelöst)
+#  ${VAR} = Compose-Variable (aus .env, beim Start aufgelöst)
+# ==============================================================
+
+services:
+
+  # ── MariaDB ─────────────────────────────────────────────────
+  mariadb:
+    image: mariadb:11
+    container_name: rst_mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE:      ${MARIADB_DATABASE}
+      MARIADB_USER:          ${MARIADB_USER}
+      MARIADB_PASSWORD:      ${MARIADB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./Database/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${MARIADB_PORT}:3306"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── phpMyAdmin ───────────────────────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: rst_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      PMA_HOST:     mariadb
+      PMA_PORT:     3306
+      PMA_USER:     root
+      PMA_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    ports:
+      - "${PHPMYADMIN_PORT}:80"
+    networks:
+      - backend
+      - frontend
+
+  # ── Keycloak DB Init ─────────────────────────────────────────
+  # Einmal-Container: legt Keycloak-Datenbank und User an.
+  # $$VAR wird NICHT von Compose aufgelöst → Auflösung durch bash im Container.
+  keycloak_db_init:
+    image: mariadb:11
+    container_name: rst_keycloak_db_init
+    restart: "no"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      INIT_ROOT_PW: ${MARIADB_ROOT_PASSWORD}
+      INIT_DB:      ${KEYCLOAK_DB_NAME}
+      INIT_USER:    ${KEYCLOAK_DB_USER}
+      INIT_PW:      ${KEYCLOAK_DB_PASSWORD}
+    entrypoint: ["bash", "-c"]
+    command:
+      - >
+        mariadb -h mariadb -u root -p"$$INIT_ROOT_PW"
+        -e "CREATE DATABASE IF NOT EXISTS $$INIT_DB
+              CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+            CREATE USER IF NOT EXISTS '$$INIT_USER'@'%'
+              IDENTIFIED BY '$$INIT_PW';
+            GRANT ALL PRIVILEGES ON $$INIT_DB.* TO '$$INIT_USER'@'%';
+            FLUSH PRIVILEGES;"
+    networks:
+      - backend
+
+  # ── Keycloak ─────────────────────────────────────────────────
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: rst_keycloak
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      keycloak_db_init:
+        condition: service_completed_successfully
+    command: start-dev --import-realm
+    environment:
+      KC_DB:                   mariadb
+      KC_DB_URL:               jdbc:mariadb://mariadb:3306/${KEYCLOAK_DB_NAME}
+      KC_DB_USERNAME:          ${KEYCLOAK_DB_USER}
+      KC_DB_PASSWORD:          ${KEYCLOAK_DB_PASSWORD}
+      KEYCLOAK_ADMIN:          ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME_STRICT:      "false"
+      KC_HTTP_ENABLED:         "true"
+    volumes:
+      - ./.infra/keycloak/rst-inventar-realm.json:/opt/keycloak/data/import/rst-inventar-realm.json:ro
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+    networks:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo OK || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+
+  # ── RustFS ───────────────────────────────────────────────────
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: rst_rustfs
+    restart: unless-stopped
+    environment:
+      RUSTFS_ROOT_USER:     ${RUSTFS_ROOT_USER}
+      RUSTFS_ROOT_PASSWORD: ${RUSTFS_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - rustfs_data:/data
+    ports:
+      - "${RUSTFS_PORT_API}:9000"
+      - "${RUSTFS_PORT_CONSOLE}:9001"
+    networks:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 9000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  # ── PHP/Apache Web-Frontend (./app) ──────────────────────────
+  # Baut das lokale Dockerfile, mountet ./app nach /var/www/html
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: rst_app
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      DB_HOST:     mariadb
+      DB_PORT:     3306
+      DB_NAME:     ${MARIADB_DATABASE}
+      DB_USER:     ${MARIADB_USER}
+      DB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - ./app:/var/www/html:ro
+    ports:
+      - "${APP_PORT}:80"
+    networks:
+      - backend
+      - frontend
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  mariadb_data:
+    name: rst_mariadb_data
+  rustfs_data:
+    name: rst_rustfs_data
+
+# ── Netzwerke ────────────────────────────────────────────────
+networks:
+  backend:
+    name: rst_backend
+    driver: bridge
+  frontend:
+    name: rst_frontend
+    driver: bridge

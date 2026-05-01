@@ -1,39 +1,28 @@
 <?php
-require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/config/app.php';
 require_once __DIR__ . '/includes/auth.php';
 
 startSession();
 
-// prüft ob mann eingelogt ist wenn ja dann Wird man auf das Dashbaord geleitet wenn nicht bleibt man auf der Index seite
 if (isLoggedIn()) {
-    header('Location: /RST-INVENTAR/app/index.php');
+    header('Location: /pages/dashboard.php');
     exit;
 }
 
+// Keycloak-Authorization-URL aufbauen
+$state = bin2hex(random_bytes(16));
+$_SESSION['oauth_state'] = $state;
 
-$error = '';
-
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-
-    if(empty($username) || empty ($password)){
-        $error = 'Bitte Benutzernamen und Passwort eingeben';
-    }else{
-        $pdo = getDB();
-        $stmt =  $pdo->prepare('SELECT BID, B_Name, B_Passwort FROM Benutzer WHERE B_Name = ?');
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
-
-        if($user && password_verify($password, $user['B_Passwort'])){
-            loginUser((int)$user['BID'], $user['B_Name']);
-            header('Location: /RST-INVENTAR/app/pages/dashboard.php');
-            exit;
-        }else{
-            $error = 'Benutzername oder Passwort ist falsch';
-        }
-    }
-}
+$authUrl = KC_BASE_PUBLIC
+    . '/realms/' . KC_REALM
+    . '/protocol/openid-connect/auth?'
+    . http_build_query([
+        'client_id'     => KC_CLIENT_ID,
+        'response_type' => 'code',
+        'scope'         => 'openid profile email roles',
+        'redirect_uri'  => APP_URL . '/callback.php',
+        'state'         => $state,
+    ]);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -43,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     <title>Anmelden – RST-Inventar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/RST-INVENTAR/app/assets/css/app.css">
+    <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 <body class="login-page">
 
@@ -88,51 +77,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         </div>
     </div>
 
-    <!-- Rechte Seite – Login Formular -->
+    <!-- Rechte Seite – Login -->
     <div class="login-right">
         <div class="login-form">
             <h2 class="login-form__title">Willkommen zurück</h2>
-            <p class="login-form__sub">Melden Sie sich mit Ihren Zugangsdaten an.</p>
+            <p class="login-form__sub">Melden Sie sich mit Ihrem Unternehmens-Account an.</p>
 
-            <?php if ($error): ?>
-            <div class="alert alert--error">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <?= htmlspecialchars($error) ?>
-            </div>
-            <?php endif; ?>
-
-            <form method="POST" action="/RST-Inventar/app/index.php">
-                <div class="form-group">
-                    <label class="form-label" for="username">Benutzername <span>*</span></label>
-                    <input
-                        class="form-control"
-                        type="text"
-                        id="username"
-                        name="username"
-                        placeholder="Ihr Benutzername"
-                        value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
-                        required
-                        autofocus
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="password">Passwort <span>*</span></label>
-                    <input
-                        class="form-control"
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Ihr Passwort"
-                        required
-                    >
-                </div>
-
-                <button type="submit" class="btn btn--navy login-submit" style="background:var(--navy);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                    Anmelden
-                </button>
-            </form>
+            <a href="<?= htmlspecialchars($authUrl) ?>" class="btn btn--navy login-submit" style="display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;margin-top:32px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                    <path d="M15 12H9m3-3v6"/>
+                </svg>
+                Mit Keycloak anmelden
+            </a>
 
             <p style="margin-top:24px; text-align:center; font-size:.8rem; color:var(--gray-4);">
                 RST-Veolia GmbH &amp; Co. KG &middot; Herrenberg
@@ -140,6 +97,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         </div>
     </div>
 
-    <script src="/RST-INVENTAR/app/assets/js/app.js"></script>
+    <script src="/assets/js/app.js"></script>
 </body>
 </html>

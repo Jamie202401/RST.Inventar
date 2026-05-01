@@ -1,0 +1,118 @@
+{
+  "realm": "rst-inventar",
+  "displayName": "RST Inventarverwaltung",
+  "displayNameHtml": "<strong>RST</strong> Inventarverwaltung",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 5,
+  "passwordPolicy": "length(8) and upperCase(1) and specialChars(1) and digits(1)",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      {
+        "name": "rst-admin",
+        "description": "Administrator – voller Zugriff auf Inventar und Konfiguration",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "rst-user",
+        "description": "Standardbenutzer – Inventar einsehen und bearbeiten",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "rst-inventar-app",
+      "name": "RST Inventar Webapplikation",
+      "description": "PHP/Apache Inventarverwaltungs-Frontend",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "rst-inventar-client-secret",
+      "redirectUris": [
+        "http://localhost/*",
+        "http://localhost:80/*"
+      ],
+      "webOrigins": [
+        "http://localhost",
+        "http://localhost:80"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles"
+      ],
+      "optionalClientScopes": []
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@rst-veolia.de",
+      "firstName": "System",
+      "lastName": "Administrator",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123!",
+          "temporary": true
+        }
+      ],
+      "realmRoles": ["rst-admin", "rst-user"]
+    },
+    {
+      "username": "mmueller",
+      "enabled": true,
+      "email": "mmueller@rst-veolia.de",
+      "firstName": "Max",
+      "lastName": "Müller",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "User123!",
+          "temporary": true
+        }
+      ],
+      "realmRoles": ["rst-user"]
+    },
+    {
+      "username": "sschmidt",
+      "enabled": true,
+      "email": "sschmidt@rst-veolia.de",
+      "firstName": "Sarah",
+      "lastName": "Schmidt",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "User123!",
+          "temporary": true
+        }
+      ],
+      "realmRoles": ["rst-user"]
+    }
+  ]
+}
