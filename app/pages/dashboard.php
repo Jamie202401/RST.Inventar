@@ -81,7 +81,7 @@ include __DIR__ . '/../includes/header.php';
 
 <!-- Aktions-Karten -->
 <div class="action-grid fade-in">
-    <a href="/RST-INVENTAR/app/pages/inventar_erstellen.php" class="action-card action-card--gold">
+    <a href="/pages/inventar_erstellen.php" class="action-card action-card--gold">
         <div class="action-card__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         </div>
@@ -90,7 +90,7 @@ include __DIR__ . '/../includes/header.php';
         <div class="action-card__arrow">Jetzt anlegen →</div>
     </a>
 
-    <a href="/RST-INVENTAR/app/pages/barcodes.php" class="action-card">
+    <a href="/pages/barcodes.php" class="action-card">
         <div class="action-card__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v10M19 5v14M3 5h2M7 5h2"/></svg>
         </div>
@@ -99,7 +99,7 @@ include __DIR__ . '/../includes/header.php';
         <div class="action-card__arrow">Zu den Barcodes →</div>
     </a>
 
-    <a href="/RST-INVENTAR/app/pages/inventar_liste.php" class="action-card">
+    <a href="/pages/inventar_liste.php" class="action-card">
         <div class="action-card__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         </div>
@@ -113,7 +113,7 @@ include __DIR__ . '/../includes/header.php';
 <div class="card fade-in">
     <div class="card__header">
         <span class="card__title">Zuletzt hinzugefügte Geräte</span>
-        <a href="/RST-INVENTAR/app/pages/inventar_liste.php" class="btn btn--outline btn--sm">Alle anzeigen</a>
+        <a href="/pages/inventar_liste.php" class="btn btn--outline btn--sm">Alle anzeigen</a>
     </div>
     <?php if (empty($letzteGeraete)): ?>
     <div class="card__body">
@@ -123,7 +123,7 @@ include __DIR__ . '/../includes/header.php';
             </div>
             <div class="empty-state__title">Noch keine Geräte vorhanden</div>
             <div class="empty-state__text">Legen Sie Ihr erstes Gerät an um es hier zu sehen.</div>
-            <a href="/RST-INVENTAR/app/pages/inventar_erstellen.php" class="btn btn--gold">Erstes Gerät anlegen</a>
+            <a href="/pages/inventar_erstellen.php" class="btn btn--gold">Erstes Gerät anlegen</a>
         </div>
     </div>
     <?php else: ?>

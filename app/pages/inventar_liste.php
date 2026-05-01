@@ -82,7 +82,7 @@ include __DIR__ . '/../includes/header.php';
 <!-- Filter -->
 <div class="card fade-in" style="margin-bottom:24px;">
     <div class="card__body" style="padding:20px 28px;">
-        <form method="GET" action="/RST-INVENTAR/app/pages/inventar_liste.php">
+        <form method="GET" action="/pages/inventar_liste.php">
             <div class="filter-bar">
                 <div class="form-group">
                     <label class="form-label">
@@ -121,7 +121,7 @@ include __DIR__ . '/../includes/header.php';
                         Suchen
                     </button>
                     <?php if ($suche || $filterK || $filterS): ?>
-                    <a href="/RST-INVENTAR/app/pages/inventar_liste.php" class="btn btn--outline" title="Filter zurücksetzen">
+                    <a href="/pages/inventar_liste.php" class="btn btn--outline" title="Filter zurücksetzen">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </a>
                     <?php endif; ?>
@@ -140,7 +140,7 @@ include __DIR__ . '/../includes/header.php';
                 <span class="badge badge--navy" style="margin-left:8px;"><?= $gesamt ?></span>
             <?php endif; ?>
         </span>
-        <a href="/RST-INVENTAR/app/pages/inventar_erstellen.php" class="btn btn--gold btn--sm">
+        <a href="/pages/inventar_erstellen.php" class="btn btn--gold btn--sm">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Artikel anlegen
         </a>
@@ -154,7 +154,7 @@ include __DIR__ . '/../includes/header.php';
             </div>
             <div class="empty-state__title">Keine Artikel gefunden</div>
             <div class="empty-state__text">Versuchen Sie andere Suchbegriffe oder setzen Sie die Filter zurück.</div>
-            <a href="/RST-INVENTAR/app/pages/inventar_liste.php" class="btn btn--outline">Filter zurücksetzen</a>
+            <a href="/pages/inventar_liste.php" class="btn btn--outline">Filter zurücksetzen</a>
         </div>
     </div>
     <?php else: ?>
@@ -213,7 +213,7 @@ include __DIR__ . '/../includes/header.php';
                     </td>
                     <td>
                         <div class="tbl-actions">
-                            <a href="/RST-INVENTAR/app/pages/barcodes.php" class="tbl-btn" title="Barcode anzeigen">
+                            <a href="/pages/barcodes.php" class="tbl-btn" title="Barcode anzeigen">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v10M19 5v14"/></svg>
                             </a>
                         </div>

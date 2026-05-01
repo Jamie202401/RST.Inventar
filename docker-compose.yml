@@ -6,8 +6,6 @@
 #    phpmyadmin       – DB-Frontend      → http://localhost:${PHPMYADMIN_PORT}
 #    keycloak_db_init – Einmalig: legt Keycloak-DB an
 #    keycloak         – Identity Provider → http://localhost:${KEYCLOAK_PORT}
-#    rustfs           – S3-Objektspeicher → API  :${RUSTFS_PORT_API}
-#                                           Web  :${RUSTFS_PORT_CONSOLE}
 #    app              – PHP/Apache App   → http://localhost:${APP_PORT}
 #
 #  Alle Ports und Passwörter werden aus der .env gelesen.
@@ -122,30 +120,6 @@ services:
       retries: 10
       start_period: 90s
 
-  # ── RustFS ───────────────────────────────────────────────────
-  rustfs:
-    image: rustfs/rustfs:latest
-    container_name: rst_rustfs
-    restart: unless-stopped
-    environment:
-      RUSTFS_ROOT_USER:     ${RUSTFS_ROOT_USER}
-      RUSTFS_ROOT_PASSWORD: ${RUSTFS_ROOT_PASSWORD}
-    command: server /data --console-address ":9001"
-    volumes:
-      - rustfs_data:/data
-    ports:
-      - "${RUSTFS_PORT_API}:9000"
-      - "${RUSTFS_PORT_CONSOLE}:9001"
-    networks:
-      - backend
-      - frontend
-    healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 9000 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 20s
-
   # ── PHP/Apache Web-Frontend (./app) ──────────────────────────
   # Baut das lokale Dockerfile, mountet ./app nach /var/www/html
   app:
@@ -175,8 +149,6 @@ services:
 volumes:
   mariadb_data:
     name: rst_mariadb_data
-  rustfs_data:
-    name: rst_rustfs_data
 
 # ── Netzwerke ────────────────────────────────────────────────
 networks:

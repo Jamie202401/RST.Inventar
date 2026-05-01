@@ -59,7 +59,7 @@ include __DIR__ . '/../includes/header.php';
             </div>
             <div class="empty-state__title">Noch keine Artikel vorhanden</div>
             <div class="empty-state__text">Legen Sie zuerst mindestens einen Artikel an, um Barcodes zu sehen.</div>
-            <a href="/pages/inventar-erstellen.php" class="btn btn--gold">
+            <a href="/pages/inventar_erstellen.php" class="btn btn--gold">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Ersten Artikel anlegen
             </a>
@@ -82,7 +82,7 @@ include __DIR__ . '/../includes/header.php';
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Alle drucken
         </button>
-        <a href="/pages/inventar-erstellen.php" class="btn btn--outline">
+        <a href="/pages/inventar_erstellen.php" class="btn btn--outline">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             Neuer Artikel
         </a>

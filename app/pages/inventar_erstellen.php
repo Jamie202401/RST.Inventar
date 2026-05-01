@@ -57,7 +57,7 @@ include __DIR__ . '/../includes/header.php';
 <?php if ($success): ?>
 <div class="alert alert--success fade-in">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-    <div><?= $success ?> <a href="/RST-INVENTAR/app/pages/barcodes.php" style="font-weight:700;text-decoration:underline;margin-left:6px;">→ Barcode anzeigen</a></div>
+    <div><?= $success ?> <a href="/pages/barcodes.php" style="font-weight:700;text-decoration:underline;margin-left:6px;">→ Barcode anzeigen</a></div>
 </div>
 <?php endif; ?>
 
@@ -88,7 +88,7 @@ include __DIR__ . '/../includes/header.php';
         <span class="badge badge--navy">* Pflichtfelder</span>
     </div>
     <div class="card__body">
-        <form method="POST" action="/RST-INVENTAR/app/pages/inventar_erstellen.php">
+        <form method="POST" action="/pages/inventar_erstellen.php">
 
             <!-- Pflichtfelder -->
             <div class="form-section">
@@ -179,7 +179,7 @@ include __DIR__ . '/../includes/header.php';
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                     Artikel speichern
                 </button>
-                <a href="/RST-INVENTAR/app/pages/dashboard.php" class="btn btn--outline btn--lg">Abbrechen</a>
+                <a href="/pages/dashboard.php" class="btn btn--outline btn--lg">Abbrechen</a>
             </div>
 
         </form>
