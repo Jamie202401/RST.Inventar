@@ -5,11 +5,11 @@
 -- Auth: Keycloak (kein lokales Passwort in der DB)
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS RSTInventar
+CREATE DATABASE IF NOT EXISTS rst_inventar
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE RSTInventar;
+USE rst_inventar;
 
 -- ============================================================
 -- TABELLEN

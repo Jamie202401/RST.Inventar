@@ -13,13 +13,14 @@ $pdo = getDB();
 
 $inventar = $pdo->query(
     'SELECT i.InvID, i.Barcode,
-            g.GID, g.G_Name, g.G_Hersteller,
+            g.GID, g.G_Name, h.H_Name AS G_Hersteller,
             k.K_Name AS Kategorie,
             s.S_Name AS Standort
       FROM Inventar i
       JOIN Geraete   g ON i.GID = g.GID
       JOIN Kategorie k ON g.KID = k.KID
       JOIN Standorte s ON i.SID = s.SID
+      LEFT JOIN Hersteller h ON g.HID = h.HID
       ORDER BY i.InvID DESC'
 )->fetchAll();
 

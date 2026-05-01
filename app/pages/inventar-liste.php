@@ -14,7 +14,7 @@ $filterS = (int) ($_GET['sid'] ?? 0);
 $where  = ['1=1'];
 $params = [];
 if ($suche) {
-    $where[]  = '(g.G_Name LIKE ? OR g.G_Hersteller LIKE ? OR i.Barcode LIKE ?)';
+    $where[]  = '(g.G_Name LIKE ? OR h.H_Name LIKE ? OR i.Barcode LIKE ?)';
     $like     = "%$suche%";
     $params[] = $like; $params[] = $like; $params[] = $like;
 }
@@ -22,7 +22,7 @@ if ($filterK) { $where[] = 'g.KID = ?'; $params[] = $filterK; }
 if ($filterS) { $where[] = 'i.SID = ?'; $params[] = $filterS; }
 
 $sql = 'SELECT i.InvID, i.Barcode,
-               g.GID, g.G_Name, g.G_Hersteller, g.G_Kosten, g.G_Garantieende,
+               g.GID, g.G_Name, h.H_Name AS G_Hersteller, g.G_Kosten, g.G_Garantieende,
                k.K_Name AS Kategorie,
                s.S_Name AS Standort,
                g.G_CreateDate, g.G_Creator
@@ -30,6 +30,7 @@ $sql = 'SELECT i.InvID, i.Barcode,
         JOIN Geraete   g ON i.GID = g.GID
         JOIN Kategorie k ON g.KID = k.KID
         JOIN Standorte s ON i.SID = s.SID
+        LEFT JOIN Hersteller h ON g.HID = h.HID
         WHERE ' . implode(' AND ', $where) . '
         ORDER BY i.InvID DESC';
 $stmt = $pdo->prepare($sql);

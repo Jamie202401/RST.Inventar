@@ -22,10 +22,11 @@ $stats = [
 
 // Letzte 5 Geräte
 $letzteGeraete = $pdo->query(
-    'SELECT g.GID, g.G_Name, g.G_Hersteller, k.K_Name AS Kategorie,
+    'SELECT g.GID, g.G_Name, h.H_Name AS G_Hersteller, k.K_Name AS Kategorie,
             g.G_CreateDate, g.G_Creator
      FROM Geraete g
      JOIN Kategorie k ON g.KID = k.KID
+     LEFT JOIN Hersteller h ON g.HID = h.HID
      ORDER BY g.G_CreateDate DESC LIMIT 5'
 )->fetchAll();
 
