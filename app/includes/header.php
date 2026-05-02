@@ -59,12 +59,37 @@ $user = getCurrentUser();
             </svg>
             Inventarliste
         </a>
-        <a href="/pages/barcodes.php"
-           class="sidebar__link <?= basename($_SERVER['PHP_SELF']) === 'barcodes.php' ? 'active' : '' ?>">
+        <a href="/pages/scanner.php"
+           class="sidebar__link <?= basename($_SERVER['PHP_SELF']) === 'scanner.php' ? 'active' : '' ?>">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 5v14M7 5v14M11 5v14M15 5v10M19 5v14M3 5h2M7 5h2"/>
+                <path d="M4 7V4h3M17 4h3v3M4 17v3h3M17 20h3v-3"/><path d="M3 12h18" stroke-dasharray="2 2"/>
             </svg>
-            Barcodes
+            Scanner
+        </a>
+        <a href="/pages/etiketten.php"
+           class="sidebar__link <?= basename($_SERVER['PHP_SELF']) === 'etiketten.php' ? 'active' : '' ?>">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+            </svg>
+            Etiketten
+        </a>
+
+        <div class="sidebar__sep"></div>
+        <div class="sidebar__label">Stammdaten</div>
+
+        <a href="/pages/hersteller.php"
+           class="sidebar__link <?= basename($_SERVER['PHP_SELF']) === 'hersteller.php' ? 'active' : '' ?>">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            Hersteller
+        </a>
+        <a href="/pages/lieferanten.php"
+           class="sidebar__link <?= basename($_SERVER['PHP_SELF']) === 'lieferanten.php' ? 'active' : '' ?>">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Lieferanten
         </a>
     </nav>
 

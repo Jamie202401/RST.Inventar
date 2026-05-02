@@ -9,15 +9,17 @@ $success = '';
 $error   = '';
 $pageTitle = 'Artikel anlegen';
 
-$kategorien = $pdo->query('SELECT KID, K_Name FROM Kategorie ORDER BY K_Name')->fetchAll();
-$standorte  = $pdo->query('SELECT SID, S_Name FROM Standorte ORDER BY S_Name')->fetchAll();
+$kategorien  = $pdo->query('SELECT KID, K_Name FROM Kategorie ORDER BY K_Name')->fetchAll();
+$standorte   = $pdo->query('SELECT SID, S_Name FROM Standorte ORDER BY S_Name')->fetchAll();
+$hersteller  = $pdo->query('SELECT HID, H_Name FROM Hersteller ORDER BY H_Name')->fetchAll();
+$lieferanten = $pdo->query('SELECT LID, L_Name FROM Lieferant ORDER BY L_Name')->fetchAll();
 
 $barcode = 'RST-' . date('Y') . '-' . strtoupper(substr(uniqid(), -5));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name         = trim($_POST['g_name']         ?? '');
-    $hersteller   = trim($_POST['g_hersteller']   ?? '');
-    $lieferant    = trim($_POST['g_lieferant']     ?? '');
+    $hid          = (int) ($_POST['hid']          ?? 0);
+    $lid          = (int) ($_POST['lid']          ?? 0);
     $kaufdatum    = $_POST['g_kaufdatum']   ?: null;
     $kosten       = $_POST['g_kosten'] !== '' ? (float) $_POST['g_kosten'] : null;
     $garantieende = $_POST['g_garantieende'] ?: null;
@@ -34,8 +36,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $barcode = 'RST-' . date('Y') . '-' . strtoupper(substr(uniqid(), -5));
             $stmt = $pdo->prepare('CALL sp_GeraetAnlegen(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $stmt->execute([$name, $hersteller ?: null, $lieferant ?: null,
-                $kaufdatum, $kosten, $garantieende, $kid, $sid, $user['id'], $barcode]);
+            $stmt->execute([
+                $name, 
+                $hid ?: null, 
+                $lid ?: null,
+                $kaufdatum, 
+                $kosten, 
+                $garantieende, 
+                $kid, 
+                $sid, 
+                $user['id'], 
+                $barcode
+            ]);
             $success = 'Gerät "' . htmlspecialchars($name) . '" wurde erfolgreich angelegt. Barcode: ' . $barcode;
             $_POST = [];
             $barcode = 'RST-' . date('Y') . '-' . strtoupper(substr(uniqid(), -5));
@@ -143,16 +155,26 @@ include __DIR__ . '/../includes/header.php';
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="g_hersteller">Hersteller</label>
-                        <input class="form-control" type="text" id="g_hersteller" name="g_hersteller"
-                            placeholder="z.B. Dell, HP, Lenovo"
-                            value="<?= htmlspecialchars($_POST['g_hersteller'] ?? '') ?>">
+                        <label class="form-label" for="hid">Hersteller</label>
+                        <select class="form-control" id="hid" name="hid">
+                            <option value="">– Hersteller wählen –</option>
+                            <?php foreach ($hersteller as $h): ?>
+                            <option value="<?= $h['HID'] ?>" <?= (($_POST['hid'] ?? '') == $h['HID']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($h['H_Name']) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="g_lieferant">Lieferant</label>
-                        <input class="form-control" type="text" id="g_lieferant" name="g_lieferant"
-                            placeholder="z.B. Bechtle, Amazon"
-                            value="<?= htmlspecialchars($_POST['g_lieferant'] ?? '') ?>">
+                        <label class="form-label" for="lid">Lieferant</label>
+                        <select class="form-control" id="lid" name="lid">
+                            <option value="">– Lieferant wählen –</option>
+                            <?php foreach ($lieferanten as $l): ?>
+                            <option value="<?= $l['LID'] ?>" <?= (($_POST['lid'] ?? '') == $l['LID']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($l['L_Name']) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="g_kaufdatum">Kaufdatum</label>

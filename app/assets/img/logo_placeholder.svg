@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+    <rect width="100" height="100" rx="15" fill="#E8F0FA" />
+    <path d="M50 25 L75 75 L25 75 Z" fill="#C8963E" />
+    <text x="50" y="65" font-family="sans-serif" font-weight="bold" font-size="16" fill="#0F2D52" text-anchor="middle">LOGO</text>
+</svg>

@@ -33,6 +33,7 @@ CREATE TABLE Benutzer (
 CREATE TABLE Hersteller (
   HID          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   H_Name       VARCHAR(150) NOT NULL,
+  H_Kundennummer VARCHAR(100),
   H_Land       VARCHAR(100),
   H_Webseite   VARCHAR(255),
   H_CreateDate DATETIME     DEFAULT CURRENT_TIMESTAMP,
@@ -50,6 +51,7 @@ CREATE TABLE Hersteller (
 CREATE TABLE Lieferant (
   LID          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   L_Name       VARCHAR(150) NOT NULL,
+  L_Kundennummer VARCHAR(100),
   L_Kontakt    VARCHAR(150),
   L_Email      VARCHAR(255),
   L_Telefon    VARCHAR(50),

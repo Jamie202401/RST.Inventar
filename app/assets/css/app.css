@@ -130,6 +130,20 @@ input, button, select, textarea { font-family: inherit; }
 }
 .sidebar__link.active svg { stroke: var(--gold); }
 
+.sidebar__sep {
+    height: 1px;
+    background: rgba(255,255,255,.08);
+    margin: 16px 14px;
+}
+.sidebar__label {
+    padding: 0 14px 8px;
+    font-size: .68rem;
+    font-weight: 700;
+    color: rgba(255,255,255,.3);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
 .sidebar__logout {
     display: flex;
     align-items: center;
