@@ -133,12 +133,113 @@ rst-inventar/
 
 | Komponente | Technologie |
 |---|---|
-| Webserver | Apache (via XAMPP) |
-| Datenbank | MySQL 8.x (via XAMPP) |
+| Webserver | Apache (via Docker) |
+| Datenbank | MariaDB 11 (via Docker) |
 | DB-Administration | phpMyAdmin |
-| Backend | PHP 8.x |
+| Identity Provider | Keycloak 24.0 |
+| Backend | PHP 8.2 |
 | Barcode-Generierung | [picqer/php-barcode-generator](https://github.com/picqer/php-barcode-generator) |
 | Versionsverwaltung | Git / GitHub |
+
+---
+
+## 🏗️ Systemarchitektur
+
+### Datenbank-Modell (ER-Diagramm)
+
+```mermaid
+erDiagram
+    Benutzer ||--o{ Hersteller : "Creator/Changer"
+    Benutzer ||--o{ Lieferant : "Creator/Changer"
+    Benutzer ||--o{ Kategorie : "Creator/Changer"
+    Benutzer ||--o{ Geraete : "Creator/Changer"
+    Benutzer ||--o{ Standorte : "Creator/Changer"
+    Benutzer ||--o{ Inventar : "verantwortlich"
+    Benutzer ||--o{ Historie : "verursacht"
+
+    Kategorie ||--o{ Geraete : "hat"
+    Hersteller ||--o{ Geraete : "produziert"
+    Lieferant ||--o{ Geraete : "liefert"
+    
+    Geraete ||--o{ Inventar : "als"
+    Standorte ||--o{ Inventar : "beheimatet"
+    
+    Geraete ||--o{ Historie : "erfährt"
+
+    Benutzer {
+        int BID PK
+        string B_Name
+        string B_KeycloakSub
+    }
+    Hersteller {
+        int HID PK
+        string H_Name
+    }
+    Lieferant {
+        int LID PK
+        string L_Name
+    }
+    Kategorie {
+        int KID PK
+        string K_Name
+    }
+    Standorte {
+        int SID PK
+        string S_Name
+    }
+    Geraete {
+        int GID PK
+        string G_Name
+        int HID FK
+        int LID FK
+        int KID FK
+        decimal G_Kosten
+    }
+    Inventar {
+        int InvID PK
+        string Barcode
+        int GID FK
+        int SID FK
+        int BID FK
+    }
+    Historie {
+        int HID PK
+        string H_Tabelle
+        string H_Aktion
+        string H_Feld
+    }
+```
+
+### Netzwerk-Übersicht (Docker-Umgebung)
+
+```mermaid
+graph TD
+    User([Benutzer / Browser])
+    
+    subgraph "Docker Host (Localhost)"
+        subgraph "Frontend Netzwerk"
+            APP[PHP / Apache Web-Frontend]
+            KC[Keycloak IdP]
+            PMA[phpMyAdmin]
+        end
+        
+        subgraph "Backend Netzwerk"
+            DB[(MariaDB 11)]
+            KC_INIT[Keycloak DB Init]
+        end
+    end
+    
+    User -->|HTTP| APP
+    User -->|HTTP| KC
+    User -->|HTTP| PMA
+    
+    APP -->|PDO MySQL| DB
+    KC -->|JDBC| DB
+    PMA -->|MySQL| DB
+    KC_INIT -->|SQL Init| DB
+    
+    APP -.->|OIDC / OAuth2| KC
+```
 
 ---
 

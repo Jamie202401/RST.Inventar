@@ -125,7 +125,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     container_name: rst_app
     restart: unless-stopped
     depends_on:
