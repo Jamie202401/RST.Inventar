@@ -50,6 +50,7 @@ foreach ($inventar as $item) {
     }
 }
 
+$mainContainerClass = 'main__inner--fluid';
 include __DIR__ . '/../includes/header.php';
 ?>
 
@@ -170,7 +171,7 @@ include __DIR__ . '/../includes/header.php';
                     <th>Kaufdatum</th>
                     <th>Kosten</th>
                     <th>Garantie</th>
-                    <th></th>
+                    <th style="text-align:right;">Aktionen</th>
                 </tr>
             </thead>
             <tbody>
@@ -213,6 +214,9 @@ include __DIR__ . '/../includes/header.php';
                     </td>
                     <td>
                         <div class="tbl-actions">
+                            <a href="/pages/inventar_bearbeiten.php?id=<?= $item['InvID'] ?>" class="tbl-btn" title="Bearbeiten">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            </a>
                             <a href="/pages/barcodes.php" class="tbl-btn" title="Barcode anzeigen">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v10M19 5v14"/></svg>
                             </a>

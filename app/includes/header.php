@@ -91,6 +91,13 @@ $user = getCurrentUser();
             </svg>
             Lieferanten
         </a>
+        <a href="/pages/standorte.php"
+           class="sidebar__link <?= basename($_SERVER['PHP_SELF']) === 'standorte.php' ? 'active' : '' ?>">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            Standorte
+        </a>
     </nav>
 
     <a href="/pages/logout.php" class="sidebar__logout">
@@ -104,4 +111,4 @@ $user = getCurrentUser();
 </nav>
 
 <main class="main">
-    <div class="main__inner">
+    <div class="main__inner <?= $mainContainerClass ?? '' ?>">

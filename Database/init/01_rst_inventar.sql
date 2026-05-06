@@ -111,6 +111,10 @@ CREATE TABLE Geraete (
 CREATE TABLE Standorte (
   SID          INT UNSIGNED NOT NULL AUTO_INCREMENT,
   S_Name       VARCHAR(200) NOT NULL,
+  S_Strasse    VARCHAR(255),
+  S_PLZ        VARCHAR(20),
+  S_Ort        VARCHAR(100),
+  S_Land       VARCHAR(100),
   S_CreateDate DATETIME     DEFAULT CURRENT_TIMESTAMP,
   S_Creator    VARCHAR(100),
   S_CreatorID  INT UNSIGNED,

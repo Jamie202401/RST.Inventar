@@ -31,15 +31,16 @@
 
 ### Phase 3 · Systemumgebung einrichten `3,0 Std.`
 
-> *Einrichtung und Konfiguration der Systemumgebung unter XAMPP*
+> *Einrichtung und Konfiguration der Systemumgebung mit Docker*
 
-- 🖥️ XAMPP installiert und konfiguriert (Apache + MySQL + PHP)
-- 🌐 Apache HTTP Server für internes Netzwerk eingerichtet
-- 🗄️ MySQL-Datenbank `RSTInventar` über phpMyAdmin importiert
+- 🐳 Docker-Compose Stack erstellt (App + MariaDB + Keycloak + phpMyAdmin)
+- 🌐 Apache HTTP Server im PHP-Container konfiguriert
+- 🗄️ MariaDB-Datenbank initialisiert
+- 🔑 Keycloak Identity Provider (IdP) integriert
 - 📚 Picqer Barcode-Bibliothek eingebunden (`git clone`)
 
 ```bash
-# Picqer Barcode-Bibliothek installieren
+# Picqer Barcode-Bibliothek installieren (vor dem Docker Build)
 cd app/vendor
 git clone https://github.com/picqer/php-barcode-generator.git picqer
 ```
@@ -69,7 +70,7 @@ CALL sp_GeraetAnlegen('Dell UltraSharp 27"', 'Dell', 'Bechtle',
 
 > *Entwicklung der webbasierten Inventarverwaltungsoberfläche*
 
-- 🔐 Login mit Session-Verwaltung und bcrypt Passwort-Hashing
+- 🔐 Single Sign-On (SSO) mit Keycloak (OpenID Connect) integriert
 - 📊 Dashboard mit Statistiken und Garantie-Warnungen
 - ➕ Inventarartikel anlegen über Stored Procedure
 - 🏷️ Barcode-Generierung und -Druck via Picqer (Code 128)
@@ -79,24 +80,26 @@ CALL sp_GeraetAnlegen('Dell UltraSharp 27"', 'Dell', 'Bechtle',
 
 ## 🚀 Setup
 
-**Voraussetzungen:** XAMPP (Apache + MySQL + PHP 8.x)
+**Voraussetzungen:** Docker Desktop / Docker Engine & Docker Compose
 
 ```bash
-# 1. Projekt in XAMPP ablegen
-C:\xampp\htdocs\rst-inventar\
-
-# 2. Picqer Barcode-Bibliothek installieren
+# 1. Picqer Barcode-Bibliothek installieren
 cd app/vendor
 git clone https://github.com/picqer/php-barcode-generator.git picqer
 
-# 3. Datenbank importieren
-# phpMyAdmin → Importieren → db/RSTInventar.sql
+# 2. .env Datei aus der .env.example erstellen und anpassen
+cp .env.example .env
+
+# 3. Docker-Container starten
+docker-compose up -d --build
 
 # 4. Anwendung aufrufen
-http://localhost/rst-inventar/app/
+# App: http://localhost:8000 (Port je nach .env)
+# Keycloak: http://localhost:8180 (Port je nach .env)
+# phpMyAdmin: http://localhost:8080 (Port je nach .env)
 ```
 
-**Standard-Login:** `admin` / `password`
+**Standard-Login Keycloak:** Benutzer: `admin` / Passwort: `password` (je nach Keycloak Konfiguration)
 
 ---
 
@@ -240,6 +243,20 @@ graph TD
     
     APP -.->|OIDC / OAuth2| KC
 ```
+
+#### Interne Docker-Kommunikation
+
+Die IP-Adressen der Container werden von der Docker Engine dynamisch zugewiesen (typischerweise aus dem Bereich `172.x.x.x/16` der jeweiligen Bridge-Netzwerke `rst_frontend` und `rst_backend`). Die interne Kommunikation erfolgt daher zuverlässig über die Docker-internen DNS-Namen (Service-Namen).
+
+| Service | Interner Hostname | Interner Port | Netzwerk(e) |
+|---|---|---|---|
+| **App** | `app` | `80` | `frontend`, `backend` |
+| **Keycloak** | `keycloak` | `8080` | `frontend`, `backend` |
+| **phpMyAdmin**| `phpmyadmin` | `80` | `frontend`, `backend` |
+| **MariaDB** | `mariadb` | `3306` | `backend` |
+| **Init Job** | `keycloak_db_init`| `-` | `backend` |
+
+*(Hinweis: Die extern erreichbaren Host-Ports werden über die `.env`-Datei konfiguriert.)*
 
 ---
 

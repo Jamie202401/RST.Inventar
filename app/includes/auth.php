@@ -7,12 +7,14 @@ require_once __DIR__ . '/../config/app.php';
 
 function startSession(): void {
     if (session_status() === PHP_SESSION_NONE) {
+        // Session-Cookies für Cross-Port/IP-Betrieb optimieren
         session_set_cookie_params([
-            'lifetime' => SESSION_LIFETIME,
+            'lifetime' => 0,
             'path'     => '/',
-            'secure'   => false,
+            'domain'   => '', // Aktueller Host (192.168.2.181)
+            'secure'   => (getenv('HTTPS') === 'true' || getenv('HTTPS') === 'TRUE'),
             'httponly' => true,
-            'samesite' => 'Strict',
+            'samesite' => 'Lax'
         ]);
         session_start();
     }

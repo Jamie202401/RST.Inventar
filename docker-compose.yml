@@ -96,7 +96,13 @@ services:
         condition: service_healthy
       keycloak_db_init:
         condition: service_completed_successfully
-    command: start-dev --import-realm
+    command: >
+      start-dev --import-realm 
+      --hostname=192.168.2.181 
+      --hostname-strict=false 
+      --http-enabled=true 
+      --https-certificate-file=/opt/keycloak/conf/server.crt 
+      --https-certificate-key-file=/opt/keycloak/conf/server.key
     environment:
       KC_DB:                   mariadb
       KC_DB_URL:               jdbc:mariadb://mariadb:3306/${KEYCLOAK_DB_NAME}
@@ -104,12 +110,14 @@ services:
       KC_DB_PASSWORD:          ${KEYCLOAK_DB_PASSWORD}
       KEYCLOAK_ADMIN:          ${KEYCLOAK_ADMIN_USER}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_HOSTNAME_STRICT:      "false"
-      KC_HTTP_ENABLED:         "true"
     volumes:
       - ./.infra/keycloak/rst-inventar-realm.json:/opt/keycloak/data/import/rst-inventar-realm.json:ro
+      - ./.infra/keycloak/themes/rst-inventar:/opt/keycloak/themes/rst-inventar:ro
+      - ./.infra/ssl/server.crt:/opt/keycloak/conf/server.crt:ro
+      - ./.infra/ssl/server.key:/opt/keycloak/conf/server.key:ro
     ports:
       - "${KEYCLOAK_PORT}:8080"
+      - "8443:8443"
     networks:
       - backend
       - frontend
@@ -137,10 +145,15 @@ services:
       DB_NAME:     ${MARIADB_DATABASE}
       DB_USER:     ${MARIADB_USER}
       DB_PASSWORD: ${MARIADB_PASSWORD}
+      HTTPS:       ${HTTPS}
     volumes:
       - ./app:/var/www/html:ro
+      - ./.infra/ssl/server.crt:/etc/apache2/ssl/server.crt:ro
+      - ./.infra/ssl/server.key:/etc/apache2/ssl/server.key:ro
+      - ./.infra/apache/vhost.conf:/etc/apache2/sites-available/000-default.conf:ro
     ports:
       - "${APP_PORT}:80"
+      - "443:443"
     networks:
       - backend
       - frontend

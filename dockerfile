@@ -26,7 +26,8 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install pdo pdo_mysql
 
 # ── Apache Konfiguration ─────────────────────────────────────
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf \
+    && a2enmod ssl rewrite headers
 
 # ── PHP Konfiguration ─────────────────────────────────────────
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -45,7 +46,7 @@ RUN chown -R www-data:www-data /var/www/html
 
 # ── Port freigeben ────────────────────────────────────────────
 
-EXPOSE 80
+EXPOSE 80 443
 
 # ── Start-Befehl ─────────────────────────────────────────────
 

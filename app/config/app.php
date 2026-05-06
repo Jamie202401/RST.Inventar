@@ -12,14 +12,17 @@ define('SESSION_LIFETIME', 3600);
 define('BARCODE_PREFIX', 'RST-');
 define('BARCODE_TYPE',   'C128');
 
+// ── Protokoll-Einstellung ─────────────────────────────────────
+$protocol = (getenv('HTTPS') === 'true' || getenv('HTTPS') === 'TRUE') ? 'https' : 'http';
+
 // ── Keycloak OIDC ─────────────────────────────────────────────
 // KC_BASE_PUBLIC  = URL, die der Browser aufruft (von außen erreichbar)
 // KC_BASE_INTERNAL = URL, die PHP im Container aufruft (Docker-intern)
-define('KC_BASE_PUBLIC',   'http://localhost:8180');
+define('KC_BASE_PUBLIC',   $protocol . '://192.168.2.181:' . ($protocol === 'https' ? '8443' : '8180'));
 define('KC_BASE_INTERNAL', 'http://keycloak:8080');
 define('KC_REALM',         'rst-inventar');
 define('KC_CLIENT_ID',     'rst-inventar-app');
 define('KC_CLIENT_SECRET', 'rst-inventar-client-secret');
 
 // Öffentliche App-URL (Browser-seitig) – wird als redirect_uri genutzt
-define('APP_URL', 'http://localhost');
+define('APP_URL', $protocol . '://192.168.2.181');

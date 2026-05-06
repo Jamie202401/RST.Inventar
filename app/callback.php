@@ -8,7 +8,10 @@ startSession();
 // ── State-Prüfung ──────────────────────────────────────────────
 if (!isset($_GET['state']) || $_GET['state'] !== ($_SESSION['oauth_state'] ?? '')) {
     http_response_code(400);
-    die('Ungültiger State-Parameter. <a href="/">Zurück zur Anmeldung</a>');
+    $expected = $_SESSION['oauth_state'] ?? 'LEER';
+    $received = $_GET['state'] ?? 'LEER';
+    $cookie = isset($_COOKIE['PHPSESSID']) ? 'Ja' : 'Nein';
+    die("Ungültiger State-Parameter.<br>Erwartet: {$expected}<br>Erhalten: {$received}<br>Cookie empfangen: {$cookie}<br><br><a href='/'>Zurück zur Anmeldung</a>");
 }
 unset($_SESSION['oauth_state']);
 
